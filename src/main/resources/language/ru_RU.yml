@@ -1,0 +1,18 @@
+version: ''
+language:
+  # PREFIX
+  prefix: '&2[Brewery] &r'
+  debug-prefix: '&e[Brewery Debug] &r'
+
+  # DEBUG MESSAGES
+  debug-messages:
+    config-loaded: 'Конфигурация и языковые файлы загружены'
+
+  # BARREL MESSAGES AND OTHER VALUES
+  barrel-messages:
+    barrel-created: 'Бочка создана'
+    create-small-no-permission: '&cУ вас нет прав на создание маленьких бочек!'
+    create-large-no-permission: '&cУ вас нет прав на создание больших бочек!'
+  barrel:
+    title: 'Бочка'
+    inventory-title: 'Бочка'
