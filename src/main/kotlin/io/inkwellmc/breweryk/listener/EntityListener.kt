@@ -1,8 +1,8 @@
-package io.inkwellmc.brewery.listener
+package io.inkwellmc.breweryk.listener
 
-import io.inkwellmc.brewery.barrel.Barrel
-import io.inkwellmc.brewery.util.BukkitUtil
-import io.inkwellmc.brewery.util.LegacyUtil
+import io.inkwellmc.breweryk.barrel.Barrel
+import io.inkwellmc.breweryk.util.BukkitUtil
+import io.inkwellmc.breweryk.util.LegacyUtil
 import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

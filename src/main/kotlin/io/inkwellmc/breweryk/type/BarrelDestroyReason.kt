@@ -1,4 +1,4 @@
-package io.inkwellmc.brewery.type
+package io.inkwellmc.breweryk.type
 
 enum class BarrelDestroyReason {
   PLAYER,

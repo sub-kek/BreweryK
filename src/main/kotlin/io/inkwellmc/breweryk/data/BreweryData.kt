@@ -1,11 +1,12 @@
-package io.inkwellmc.brewery.data
+package io.inkwellmc.breweryk.data
 
 import com.tcoded.folialib.wrapper.task.WrappedTask
-import io.inkwellmc.brewery.Brewery
-import io.inkwellmc.brewery.barrel.Barrel
-import io.inkwellmc.brewery.config.BreweryConfig
-import io.inkwellmc.brewery.util.BoundingBox
-import io.inkwellmc.brewery.util.BreweryLogger
+import io.inkwellmc.breweryk.BreweryK
+import io.inkwellmc.breweryk.barrel.Barrel
+import io.inkwellmc.breweryk.cauldron.BreweryCauldron
+import io.inkwellmc.breweryk.config.BreweryConfig
+import io.inkwellmc.breweryk.util.BoundingBox
+import io.inkwellmc.breweryk.util.BreweryLogger
 import org.bukkit.World
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
@@ -21,14 +22,14 @@ object BreweryData {
 
   init {
     // Запуск авто сохранения каждые 1200 тиков( 60 секунд )
-    Brewery.instance.foliaLib.impl.runTimer(Consumer {
+    BreweryK.instance.foliaLib.impl.runTimer(Consumer {
       DataSave.autoSave()
     }, 1200, 1200)
   }
 
   // Загрузка данных
   fun readData() {
-    val file = File(Brewery.instance.dataFolder, "data.yml")
+    val file = File(BreweryK.instance.dataFolder, "data.yml")
     if (file.exists()) {
       val t1 = System.currentTimeMillis()
 
@@ -49,9 +50,9 @@ object BreweryData {
         }
       }
 
-      val worlds: List<World> = Brewery.instance.server.worlds
+      val worlds: List<World> = BreweryK.instance.server.worlds
       if (BreweryConfig.loadDataAsync) {
-        Brewery.instance.foliaLib.impl.runLaterAsync(Consumer { lwDataTask(worlds) }, 1)
+        BreweryK.instance.foliaLib.impl.runLaterAsync(Consumer { lwDataTask(worlds) }, 1)
       } else {
         lwDataTask(worlds)
       }
@@ -81,7 +82,7 @@ object BreweryData {
   // can be run async
   fun loadWorldData(uuid: String, world: World) {
     if (worldData == null) {
-      val file = File(Brewery.instance.dataFolder, "world-data.yml")
+      val file = File(BreweryK.instance.dataFolder, "world-data.yml")
       if (file.exists()) {
         val t1 = System.currentTimeMillis()
         worldData = YamlConfiguration.loadConfiguration(file)
@@ -92,6 +93,23 @@ object BreweryData {
         }
       } else {
         return
+      }
+    }
+
+    if (worldData!!.contains("cauldrons.$uuid")) {
+      val section = worldData!!.getConfigurationSection("cauldrons.$uuid")!!
+      for (cauldron in section.getKeys(false)) {
+        val cauldronBlockLocation = section.getString("block")
+        if (cauldronBlockLocation != null) {
+          val splitLocation = cauldronBlockLocation.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+          if (splitLocation.size == 3) {
+            val block = world.getBlockAt(BreweryK.instance.parseInt(splitLocation[0]), BreweryK.instance.parseInt(splitLocation[1]), BreweryK.instance.parseInt(splitLocation[2]))
+
+            BreweryK.instance.foliaLib.impl.runAtLocationLater(block.location, Consumer {
+              BreweryCauldron.getByBlock(block)
+            }, 1)
+          }
+        }
       }
     }
 
@@ -107,7 +125,7 @@ object BreweryData {
             // load itemStacks from invSection
 
             val invSection = section.getConfigurationSection("$barrel.inv")
-            val block = world.getBlockAt(Brewery.instance.parseInt(splitted[0]), Brewery.instance.parseInt(splitted[1]), Brewery.instance.parseInt(splitted[2]))
+            val block = world.getBlockAt(BreweryK.instance.parseInt(splitted[0]), BreweryK.instance.parseInt(splitted[1]), BreweryK.instance.parseInt(splitted[2]))
             val time = section.getDouble("$barrel.time", 0.0).toFloat()
             val sign = section.getInt("$barrel.sign", 0).toByte()
 
@@ -115,31 +133,12 @@ object BreweryData {
             if (section.contains("$barrel.bounds")) {
               val bds = section.getString("$barrel.bounds", "")!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
               if (bds.size == 6) {
-                box = BoundingBox(Brewery.instance.parseInt(bds[0]), Brewery.instance.parseInt(bds[1]), Brewery.instance.parseInt(bds[2]), Brewery.instance.parseInt(bds[3]), Brewery.instance.parseInt(bds[4]), Brewery.instance.parseInt(bds[5]))
-              }
-            } else if (section.contains("$barrel.st")) {
-              // Convert from Stair and Wood Locations to BoundingBox
-              val st = section.getString("$barrel.st", "")!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-              val wo = section.getString("$barrel.wo", "")!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-              var woLength = wo.size
-              if (woLength <= 1) {
-                woLength = 0
-              }
-              val points = arrayOfNulls<String>(st.size + woLength)
-              System.arraycopy(st, 0, points, 0, st.size)
-              if (woLength > 1) {
-                System.arraycopy(wo, 0, points, st.size, woLength)
-              }
-              val locs = Arrays.stream<String?>(points).mapToInt { s: String? -> Brewery.instance.parseInt(s) }.toArray()
-              try {
-                box = BoundingBox.fromPoints(locs)
-              } catch (e: Exception) {
-                e.printStackTrace()
+                box = BoundingBox(BreweryK.instance.parseInt(bds[0]), BreweryK.instance.parseInt(bds[1]), BreweryK.instance.parseInt(bds[2]), BreweryK.instance.parseInt(bds[3]), BreweryK.instance.parseInt(bds[4]), BreweryK.instance.parseInt(bds[5]))
               }
             }
 
             val bbox: BoundingBox? = box
-            Brewery.instance.foliaLib.impl.runAtLocationLater(block.location, Consumer {
+            BreweryK.instance.foliaLib.impl.runAtLocationLater(block.location, Consumer {
               val b = if (invSection != null) {
                 Barrel(block, sign, bbox!!, invSection.getValues(true), time, true)
               } else {
@@ -206,7 +205,7 @@ class ReadOldData(private val followUpConsumer: Consumer<Any?>) : Consumer<Wrapp
     }
 
 
-    val worldDataFile = File(Brewery.instance.dataFolder, "world-data.yml")
+    val worldDataFile = File(BreweryK.instance.dataFolder, "world-data.yml")
     if (BreweryData.worldData == null) {
       if (!worldDataFile.exists()) {
         data = YamlConfiguration()
@@ -220,7 +219,7 @@ class ReadOldData(private val followUpConsumer: Consumer<Any?>) : Consumer<Wrapp
     }
 
     if (DataSave.lastBackup > 10) {
-      worldDataFile.renameTo(File(Brewery.instance.dataFolder, "world-data-backup.yml"))
+      worldDataFile.renameTo(File(BreweryK.instance.dataFolder, "world-data-backup.yml"))
       DataSave.lastBackup = 0
     } else {
       DataSave.lastBackup++
@@ -231,7 +230,7 @@ class ReadOldData(private val followUpConsumer: Consumer<Any?>) : Consumer<Wrapp
 }
 
 class DataSave : Consumer<Any?> {
-  private val loadedWorlds: List<World> = Brewery.instance.server.worlds
+  private val loadedWorlds: List<World> = BreweryK.instance.server.worlds
   var collected: Boolean = false
 
   override fun accept(ignored: Any?) {
@@ -246,6 +245,10 @@ class DataSave : Consumer<Any?> {
 
       if (Barrel.barrels.isNotEmpty()) {
         Barrel.save(worldData.createSection("barrels"))
+      }
+
+      if (BreweryCauldron.cauldrons.isNotEmpty()) {
+        BreweryCauldron.save(worldData.createSection("cauldrons"))
       }
 
       collected = true
@@ -263,7 +266,7 @@ class DataSave : Consumer<Any?> {
 
       BreweryLogger.debug("saving: ${(System.nanoTime() - saveTime) / 1000000.0}ms")
 
-      if (Brewery.instance.isEnabled) Brewery.instance.foliaLib.impl.runLaterAsync(DataWrite(data, worldData), 1)
+      if (BreweryK.instance.isEnabled) BreweryK.instance.foliaLib.impl.runLaterAsync(DataWrite(data, worldData), 1)
     } catch (e: Exception) {
       e.printStackTrace()
       BreweryData.dataMutex.set(0)
@@ -284,7 +287,7 @@ class DataSave : Consumer<Any?> {
 
     fun save(collectInstant: Boolean) {
       val read = ReadOldData(DataSave())
-      if (collectInstant) read.accept(null) else Brewery.instance.foliaLib.impl.runLaterAsync(read, 1)
+      if (collectInstant) read.accept(null) else BreweryK.instance.foliaLib.impl.runLaterAsync(read, 1)
     }
 
     fun autoSave() {
@@ -300,8 +303,8 @@ class DataSave : Consumer<Any?> {
 
 class DataWrite(private val data: FileConfiguration, private val worldData: FileConfiguration) : Consumer<WrappedTask> {
   override fun accept(task: WrappedTask) {
-    val dataFile = File(Brewery.instance.dataFolder, "data.yml")
-    val worldDataFile = File(Brewery.instance.dataFolder, "world-data.yml")
+    val dataFile = File(BreweryK.instance.dataFolder, "data.yml")
+    val worldDataFile = File(BreweryK.instance.dataFolder, "world-data.yml")
 
     try {
       data.save(dataFile)

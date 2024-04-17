@@ -1,8 +1,8 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package io.inkwellmc.brewery.config
+package io.inkwellmc.breweryk.config
 
-import io.inkwellmc.brewery.Brewery
+import io.inkwellmc.breweryk.BreweryK
 import org.simpleyaml.configuration.comments.CommentType
 import org.simpleyaml.configuration.file.YamlFile
 import java.io.IOException
@@ -11,7 +11,7 @@ import java.nio.file.Path
 import java.util.logging.Level
 
 object BreweryConfig {
-  private val plugin = Brewery.instance
+  private val plugin = BreweryK.instance
   private val config = YamlFile()
 
   fun init() {

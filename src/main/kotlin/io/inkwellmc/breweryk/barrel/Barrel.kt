@@ -1,10 +1,10 @@
-package io.inkwellmc.brewery.barrel
+package io.inkwellmc.breweryk.barrel
 
-import io.inkwellmc.brewery.Brewery
-import io.inkwellmc.brewery.util.BoundingBox
-import io.inkwellmc.brewery.util.BreweryLogger
-import io.inkwellmc.brewery.util.BukkitUtil
-import io.inkwellmc.brewery.util.LegacyUtil
+import io.inkwellmc.breweryk.BreweryK
+import io.inkwellmc.breweryk.util.BoundingBox
+import io.inkwellmc.breweryk.util.BreweryLogger
+import io.inkwellmc.breweryk.util.BukkitUtil
+import io.inkwellmc.breweryk.util.LegacyUtil
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.configuration.ConfigurationSection
@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 import java.util.*
+import kotlin.ConcurrentModificationException
 
 
 class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
@@ -23,9 +24,9 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
 
   init {
     inventory = if (isLarge()) {
-      Brewery.instance.server.createInventory(this, 27, Brewery.language.get("barrel.inventory-title"))
+      BreweryK.instance.server.createInventory(this, 27, BreweryK.language.get("barrel.inventory-title"))
     } else {
-      Brewery.instance.server.createInventory(this, 9, Brewery.language.get("barrel.inventory-title"))
+      BreweryK.instance.server.createInventory(this, 9, BreweryK.language.get("barrel.inventory-title"))
     }
     body = BarrelBody(this, signOffset)
   }
@@ -34,14 +35,14 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
 
   constructor(spigot: Block, signOffset: Byte, bounds: BoundingBox, items: Map<String, Any>?, time: Float, async: Boolean) : this(spigot, signOffset) {
     if (isLarge()) {
-      this.inventory = Brewery.instance.server.createInventory(this, 27, Brewery.language.get("barrel.inventory-title"))
+      this.inventory = BreweryK.instance.server.createInventory(this, 27, BreweryK.language.get("barrel.inventory-title"))
     } else {
-      this.inventory = Brewery.instance.server.createInventory(this, 9, Brewery.language.get("barrel.inventory-title"))
+      this.inventory = BreweryK.instance.server.createInventory(this, 9, BreweryK.language.get("barrel.inventory-title"))
     }
     if (items != null) {
       for (slot in items.keys) {
         if (items[slot] is ItemStack) {
-          inventory.setItem(Brewery.instance.parseInt(slot), items[slot] as ItemStack?)
+          inventory.setItem(BreweryK.instance.parseInt(slot), items[slot] as ItemStack?)
         }
       }
     }
@@ -103,12 +104,12 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
         if (barrel.body.getBrokenBlock(true) == null) {
           if (LegacyUtil.isWoodWallSign(spigot.type)) {
             if (!player.hasPermission("brewery.createbarrel.small")) {
-              Brewery.message(player, "barrel-messages.create-small-no-permission")
+              BreweryK.message(player, "barrel-messages.create-small-no-permission")
               return false
             }
           } else {
             if (!player.hasPermission("brewery.createbarrel.large")) {
-              Brewery.message(player, "barrel-messages.create-large-no-permission")
+              BreweryK.message(player, "barrel-messages.create-large-no-permission")
               return false
             }
           }
@@ -186,12 +187,11 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
       BukkitUtil.createWorldSections(config)
 
       if (barrels.isNotEmpty()) {
-        var id = 0
-        for (barrel in barrels) {
-          var prefix: String = barrel.spigot.world.uid.toString() + "." + id
+        for ((id, barrel) in barrels.withIndex()) {
+          val prefix: String = barrel.spigot.world.uid.toString() + "." + id
 
           // block: x/y/z
-          config["$prefix.spigot"] = barrel.spigot.getX().toString() + "/" + barrel.spigot.getY() + "/" + barrel.spigot.getZ()
+          config["$prefix.spigot"] = barrel.spigot.x.toString() + "/" + barrel.spigot.y + "/" + barrel.spigot.z
 
           // save the body data into the section as well
           barrel.body.save(config, prefix)
@@ -199,7 +199,7 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
           var slot = 0
           var item: ItemStack?
           var invConfig: ConfigurationSection? = null
-          while (slot < barrel.inventory.getSize()) {
+          while (slot < barrel.inventory.size) {
             item = barrel.inventory.getItem(slot)
             if (item != null) {
               if (invConfig == null) {
@@ -208,15 +208,14 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
                 }
                 invConfig = config.createSection("$prefix.inv")
               }
-              // ItemStacks are configurationSerializeable, makes them
-              // really easy to save
-              invConfig[slot.toString() + ""] = item
+              // Предметы можно преобразовать в конфигурацию
+              // Это очень легко для сохранения
+              invConfig[slot.toString()] = item
             }
 
             slot++
           }
 
-          id++
         }
       }
     }
@@ -241,19 +240,17 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
   }
 
   fun remove(broken: Block?, breaker: Player?, dropItems: Boolean) {
+    // Скопировать лист чтобы предотвратить ConcurrentModificationException
     val viewers: List<HumanEntity> = ArrayList(inventory.viewers)
-    // Copy List to fix ConcModExc
-    for (viewer in viewers) {
-      viewer.closeInventory()
-    }
+
+    viewers.forEach { it.closeInventory() }
+
     val items = inventory.contents
     inventory.clear()
-    val wood: Byte = body.getWoodType()
-    for (item in items) {
-      if (item != null) {
-        broken?.world?.dropItem(broken.location, item) ?: spigot.world.dropItem(spigot.location, item)
-      }
-    }
+
+    items.forEach { if (it != null) {
+        broken?.world?.dropItem(broken.location, it) ?: spigot.world.dropItem(spigot.location, it)
+    }}
 
     barrels.remove(this)
   }

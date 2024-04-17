@@ -1,10 +1,10 @@
-package io.inkwellmc.brewery.util
+package io.inkwellmc.breweryk.util
 
-import io.inkwellmc.brewery.Brewery
-import io.inkwellmc.brewery.barrel.Barrel
-import io.inkwellmc.brewery.barrel.BarrelBody
-import io.inkwellmc.brewery.config.BreweryConfig
-import io.inkwellmc.brewery.type.BarrelDestroyReason
+import io.inkwellmc.breweryk.BreweryK
+import io.inkwellmc.breweryk.barrel.Barrel
+import io.inkwellmc.breweryk.barrel.BarrelBody
+import io.inkwellmc.breweryk.config.BreweryConfig
+import io.inkwellmc.breweryk.type.BarrelDestroyReason
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.WallSign
@@ -52,11 +52,11 @@ object BukkitUtil {
     location.add(0.0, 1.0, 0.0)
     if ((barrelBody.isLarge() && BreweryConfig.largeBarrelExplode) || (barrelBody.isSmall() && BreweryConfig.smallBarrelExplode)) {
       location.add((barrelBody.getSignOfSpigot().blockData as WallSign).facing.direction.multiply(if (barrelBody.isLarge()) -2 else -1))
-      Brewery.instance.foliaLib.impl.runAtLocation(location) {
+      BreweryK.instance.foliaLib.impl.runAtLocation(location) {
         val armorStand = location.world!!.spawn(location, ArmorStand::class.java)
         armorStand.isInvisible = true
         armorStand.isInvulnerable = true
-        armorStand.customName = Brewery.language.get("barrel.title")
+        armorStand.customName = BreweryK.language.get("barrel.title")
         location.world!!.createExplosion(location, if (barrelBody.isLarge()) BreweryConfig.largeBarrelExplodePower else BreweryConfig.smallBarrelExplodePower, true, true, armorStand)
         armorStand.remove()
       }
@@ -64,7 +64,7 @@ object BukkitUtil {
   }
 
   fun createWorldSections(section: ConfigurationSection) {
-    for (world in Brewery.instance.server.worlds) {
+    for (world in BreweryK.instance.server.worlds) {
       val worldName: String = world.uid.toString()
       section.createSection(worldName)
     }

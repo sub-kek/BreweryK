@@ -1,10 +1,13 @@
-package io.inkwellmc.brewery.util
+package io.inkwellmc.breweryk.util
 
-import io.inkwellmc.brewery.type.WoodType
+import io.inkwellmc.breweryk.cauldron.CauldronHeatSource
+import io.inkwellmc.breweryk.cauldron.CauldronType
+import io.inkwellmc.breweryk.type.WoodType
 import org.bukkit.Material
 import org.bukkit.Tag
 import org.bukkit.block.Block
 import org.bukkit.block.data.Bisected
+import org.bukkit.block.data.Lightable
 import org.bukkit.block.data.type.Stairs
 
 object LegacyUtil {
@@ -15,18 +18,10 @@ object LegacyUtil {
 
   init {
     // Получение всех доступных типов дерева
-    Tag.WOODEN_STAIRS.values.forEach {
-      stairs.add(it)
-    }
-    Tag.PLANKS.values.forEach {
-      planks.add(it)
-    }
-    Tag.WOODEN_FENCES.values.forEach {
-      fences.add(it)
-    }
-    Tag.WALL_SIGNS.values.forEach {
-      signs.add(it)
-    }
+    Tag.WOODEN_STAIRS.values.forEach { stairs.add(it) }
+    Tag.PLANKS.values.forEach { planks.add(it) }
+    Tag.WOODEN_FENCES.values.forEach { fences.add(it) }
+    Tag.WALL_SIGNS.values.forEach { signs.add(it) }
   }
 
   fun getWoodType(material: Material): WoodType? {
@@ -57,6 +52,25 @@ object LegacyUtil {
   fun areStairsInverted(block: Block): Boolean {
     val data = block.blockData
     return data is Stairs && data.half == Bisected.Half.TOP
+  }
+
+  private fun isLitCampfire(block: Block): Boolean {
+    val blockData = block.blockData
+    if (blockData is Lightable) return blockData.isLit
+    return false
+  }
+
+  fun isCauldronHeatSource(block: Block): Boolean {
+    val typeName = block.type.name
+
+    CauldronHeatSource.entries.forEach {
+      if (it.name == typeName) {
+        if (it.needLitCheck) return isLitCampfire(block)
+        return true
+      }
+    }
+
+    return false
   }
 
   fun debug() {

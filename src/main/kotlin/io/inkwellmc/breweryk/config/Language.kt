@@ -1,4 +1,4 @@
-package io.inkwellmc.brewery.config
+package io.inkwellmc.breweryk.config
 
 enum class Language(val label: String) {
   RUSSIAN("ru_RU"),

@@ -1,7 +1,9 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import org.jetbrains.kotlin.parsing.parseBoolean
 
 plugins {
   kotlin("jvm") version "2.0.0-Beta5"
+  id("maven-publish")
   id("com.github.johnrengelman.shadow") version "8.1.1"
   id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
@@ -22,7 +24,7 @@ kotlin {
 bukkit {
   name = rootProject.name
   version = rootProject.version as String
-  main = "io.inkwellmc.brewery.Brewery"
+  main = "io.inkwellmc.breweryk.BreweryK"
 
   authors = listOf("sub-kek")
 
@@ -34,26 +36,45 @@ bukkit {
 
   foliaSupported = true
 
+  commands {
+    register("breweryk") {
+      aliases = listOf(
+        "brewery",
+        "brew"
+      )
+      permission = "breweryk.command"
+    }
+  }
+
   permissions {
-    register("brewery.player") {
+    // Права игрока
+    register("breweryk.player") {
       childrenMap = mapOf(
-        "brewery.createbarrel" to true
+        "breweryk.createbarrel" to true,
+        "breweryk.command" to true
       )
       default = BukkitPluginDescription.Permission.Default.TRUE
     }
+
+    // Права на создание бочек
     register("brewery.createbarrel") {
       childrenMap = mapOf(
-        "brewery.createbarrel.small" to true,
-        "brewery.createbarrel.large" to true
+        "breweryk.createbarrel.small" to true,
+        "breweryk.createbarrel.large" to true
       )
     }
-    register("brewery.createbarrel.large")
-    register("brewery.createbarrel.small")
+    register("breweryk.createbarrel.large")
+    register("breweryk.createbarrel.small")
+
+    // Права на команды
+    register("breweryk.command")
   }
 }
 
 dependencies {
-  compileOnly("org.spigotmc:spigot-api:${properties["spigotVersion"]}")
+  if (parseBoolean(properties["useSpigotApi"] as String)) compileOnly("org.spigotmc:spigot-api:${properties["spigotVersion"]}")
+  else compileOnly("io.inkwellmc.inkwell:inkwell-api:${properties["inkwellVersion"]}")
+
   shadow("org.jetbrains.kotlin:kotlin-stdlib:2.0.0-Beta5")
 
   /*
@@ -84,11 +105,11 @@ tasks.shadowJar {
   configurations = listOf(project.configurations.shadow.get())
   mergeServiceFiles()
 
-  relocate("com.tcoded.folialib", "io.inkwellmc.brewery.libs.com.tcoded.folialib")
-  relocate("kotlin", "io.inkwellmc.brewery.libs.kotlin")
-  relocate("org.yaml.snakeyaml", "io.inkwellmc.brewery.libs.org.yaml.snakeyaml")
-  relocate("org.simpleyaml", "io.inkwellmc.brewery.libs.org.simpleyaml")
-  relocate("org.jetbrains.annotations", "io.inkwellmc.brewery.libs.org.jetbrains.annotations")
-  relocate("org.intellij.lang.annotations", "io.inkwellmc.brewery.libs.org.intellij.lang.annotations")
-  relocate("example", "io.inkwellmc.brewery.libs.example")
+  relocate("com.tcoded.folialib", "io.inkwellmc.breweryk.libs.com.tcoded.folialib")
+  relocate("kotlin", "io.inkwellmc.breweryk.libs.kotlin")
+  relocate("org.yaml.snakeyaml", "io.inkwellmc.breweryk.libs.org.yaml.snakeyaml")
+  relocate("org.simpleyaml", "io.inkwellmc.breweryk.libs.org.simpleyaml")
+  relocate("org.jetbrains.annotations", "io.inkwellmc.breweryk.libs.org.jetbrains.annotations")
+  relocate("org.intellij.lang.annotations", "io.inkwellmc.breweryk.libs.org.intellij.lang.annotations")
+  relocate("example", "io.inkwellmc.breweryk.libs.example")
 }

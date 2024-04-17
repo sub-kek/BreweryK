@@ -1,9 +1,9 @@
-package io.inkwellmc.brewery.barrel
+package io.inkwellmc.breweryk.barrel
 
-import io.inkwellmc.brewery.util.BoundingBox
-import io.inkwellmc.brewery.util.BreweryLogger
-import io.inkwellmc.brewery.util.BukkitUtil
-import io.inkwellmc.brewery.util.LegacyUtil
+import io.inkwellmc.breweryk.util.BoundingBox
+import io.inkwellmc.breweryk.util.BreweryLogger
+import io.inkwellmc.breweryk.util.BukkitUtil
+import io.inkwellmc.breweryk.util.LegacyUtil
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.configuration.ConfigurationSection

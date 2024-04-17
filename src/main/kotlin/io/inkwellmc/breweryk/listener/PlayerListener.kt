@@ -1,8 +1,9 @@
-package io.inkwellmc.brewery.listener
+package io.inkwellmc.breweryk.listener
 
-import io.inkwellmc.brewery.barrel.Barrel
-import io.inkwellmc.brewery.config.BreweryConfig
-import io.inkwellmc.brewery.util.LegacyUtil
+import io.inkwellmc.breweryk.barrel.Barrel
+import io.inkwellmc.breweryk.cauldron.BreweryCauldron
+import io.inkwellmc.breweryk.config.BreweryConfig
+import io.inkwellmc.breweryk.util.LegacyUtil
 import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -45,5 +46,19 @@ class PlayerListener : Listener {
 
     val barrel = event.inventory.holder as Barrel
     barrel.playClosingSound()
+  }
+
+  @EventHandler
+  fun onCauldronClick(event: PlayerInteractEvent) {
+    val clickedBlock: Block = event.clickedBlock ?: return
+    if (event.action != Action.RIGHT_CLICK_BLOCK) return
+
+    val player = event.player
+
+    if (event.hand != EquipmentSlot.HAND) return
+
+    val cauldron: BreweryCauldron = BreweryCauldron.getByBlock(clickedBlock) ?: return
+
+    cauldron.sendStatusMessage(player)
   }
 }

@@ -1,10 +1,10 @@
-package io.inkwellmc.brewery.listener
+package io.inkwellmc.breweryk.listener
 
-import io.inkwellmc.brewery.Brewery
-import io.inkwellmc.brewery.barrel.Barrel
-import io.inkwellmc.brewery.config.BreweryConfig
-import io.inkwellmc.brewery.data.BreweryData
-import io.inkwellmc.brewery.data.DataSave
+import io.inkwellmc.breweryk.BreweryK
+import io.inkwellmc.breweryk.barrel.Barrel
+import io.inkwellmc.breweryk.config.BreweryConfig
+import io.inkwellmc.breweryk.data.BreweryData
+import io.inkwellmc.breweryk.data.DataSave
 import org.bukkit.World
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -18,7 +18,7 @@ class WorldListener : Listener {
   fun onWorldLoad(event: WorldLoadEvent) {
     val world = event.world
     if (BreweryConfig.loadDataAsync) {
-      Brewery.instance.foliaLib.impl.runLaterAsync(Consumer { lwDataTask(world) }, 1)
+      BreweryK.instance.foliaLib.impl.runLaterAsync(Consumer { lwDataTask(world) }, 1)
     } else {
       lwDataTask(world)
     }

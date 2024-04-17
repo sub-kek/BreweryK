@@ -1,21 +1,21 @@
-package io.inkwellmc.brewery
+package io.inkwellmc.breweryk
 
 import com.tcoded.folialib.FoliaLib
-import io.inkwellmc.brewery.config.BreweryConfig
-import io.inkwellmc.brewery.config.YamlLanguage
-import io.inkwellmc.brewery.data.BreweryData
-import io.inkwellmc.brewery.data.DataSave
-import io.inkwellmc.brewery.listener.BlockListener
-import io.inkwellmc.brewery.listener.EntityListener
-import io.inkwellmc.brewery.listener.PlayerListener
-import io.inkwellmc.brewery.listener.WorldListener
-import io.inkwellmc.brewery.util.BreweryLogger
-import io.inkwellmc.brewery.util.LegacyUtil
+import io.inkwellmc.breweryk.config.BreweryConfig
+import io.inkwellmc.breweryk.config.YamlLanguage
+import io.inkwellmc.breweryk.data.BreweryData
+import io.inkwellmc.breweryk.data.DataSave
+import io.inkwellmc.breweryk.listener.BlockListener
+import io.inkwellmc.breweryk.listener.EntityListener
+import io.inkwellmc.breweryk.listener.PlayerListener
+import io.inkwellmc.breweryk.listener.WorldListener
+import io.inkwellmc.breweryk.util.BreweryLogger
+import io.inkwellmc.breweryk.util.LegacyUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 
-class Brewery : JavaPlugin() {
+class BreweryK : JavaPlugin() {
   lateinit var language: YamlLanguage private set
   val foliaLib = FoliaLib(this)
 
@@ -58,7 +58,7 @@ class Brewery : JavaPlugin() {
   }
 
   companion object {
-    lateinit var instance: Brewery private set
+    lateinit var instance: BreweryK private set
     val language: YamlLanguage
       get() = instance.language
 

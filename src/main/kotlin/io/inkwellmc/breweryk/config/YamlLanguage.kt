@@ -1,8 +1,8 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-package io.inkwellmc.brewery.config
+package io.inkwellmc.breweryk.config
 
-import io.inkwellmc.brewery.Brewery
+import io.inkwellmc.breweryk.BreweryK
 import org.bukkit.ChatColor
 import org.simpleyaml.configuration.file.YamlFile
 import java.io.File
@@ -13,7 +13,7 @@ import java.util.*
 import java.util.logging.Level
 
 class YamlLanguage {
-  private val plugin: Brewery = Brewery.instance
+  private val plugin: BreweryK = BreweryK.instance
   private val language = YamlFile()
 
   fun init() {
