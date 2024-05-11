@@ -1,7 +1,6 @@
 package io.inkwellmc.breweryk.util
 
 import io.inkwellmc.breweryk.cauldron.CauldronHeatSource
-import io.inkwellmc.breweryk.cauldron.CauldronType
 import io.inkwellmc.breweryk.type.WoodType
 import org.bukkit.Material
 import org.bukkit.Tag

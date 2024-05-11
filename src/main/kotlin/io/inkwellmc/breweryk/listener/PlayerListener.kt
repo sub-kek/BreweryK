@@ -29,7 +29,8 @@ class PlayerListener : Listener {
     } else if (LegacyUtil.isWoodStairs(clickedMaterial)) {
       barrel = Barrel.getByWood(clickedBlock)
       if (barrel != null && !BreweryConfig.barrelOpenEverywhere && barrel.isLarge()) barrel = null
-    } else if (LegacyUtil.isWoodFence(clickedMaterial) || LegacyUtil.isWoodWallSign(clickedMaterial)) barrel = Barrel.getBySpigot(clickedBlock)
+    } else if (LegacyUtil.isWoodFence(clickedMaterial) || LegacyUtil.isWoodWallSign(clickedMaterial)) barrel =
+      Barrel.getBySpigot(clickedBlock)
 
     if (barrel != null) {
       event.isCancelled = true

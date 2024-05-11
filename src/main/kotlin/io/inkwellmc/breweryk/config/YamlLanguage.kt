@@ -24,7 +24,7 @@ class YamlLanguage {
       var isNewFile = false
 
       if (!languageFile.exists()) {
-        val inputStream: InputStream = plugin.javaClass.getClassLoader().getResourceAsStream(
+        val inputStream: InputStream = plugin.javaClass.classLoader.getResourceAsStream(
           "language${File.separator}${if (languageExists(BreweryConfig.locale)) BreweryConfig.locale else Language.ENGLISH.label}.yml"
         )!!
         Files.copy(inputStream, languageFile.toPath())
@@ -41,7 +41,7 @@ class YamlLanguage {
       if (language.getString("version") != plugin.description.version && !isNewFile || BreweryConfig.alwaysSaveLanguage) {
         val oldLanguage = language["language"]
         languageFile.delete()
-        val inputStream: InputStream = plugin.javaClass.getClassLoader().getResourceAsStream(
+        val inputStream: InputStream = plugin.javaClass.classLoader.getResourceAsStream(
           "language${File.separator}${BreweryConfig.locale}.yml"
         )!!
         Files.copy(inputStream, languageFile.toPath())
@@ -60,7 +60,8 @@ class YamlLanguage {
   }
 
   fun languageExists(label: String): Boolean {
-    val inputStream: InputStream? = plugin.javaClass.getClassLoader().getResourceAsStream("language${File.separator}$label.yml")
+    val inputStream: InputStream? =
+      plugin.javaClass.classLoader.getResourceAsStream("language${File.separator}$label.yml")
     return !Objects.isNull(inputStream)
   }
 

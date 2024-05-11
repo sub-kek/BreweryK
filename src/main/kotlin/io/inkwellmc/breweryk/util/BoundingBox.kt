@@ -5,7 +5,14 @@ import org.bukkit.block.Block
 import kotlin.math.max
 import kotlin.math.min
 
-class BoundingBox(private val minX: Int, private val minY: Int, private val minZ: Int, private val maxX: Int, private val maxY: Int, private val maxZ: Int) {
+class BoundingBox(
+  private val minX: Int,
+  private val minY: Int,
+  private val minZ: Int,
+  private val maxX: Int,
+  private val maxY: Int,
+  private val maxZ: Int
+) {
 
   fun contains(x: Int, y: Int, z: Int): Boolean {
     return (x in minX..maxX) && (y in minY..maxY) && (z in minZ..maxZ)

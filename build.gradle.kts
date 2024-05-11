@@ -72,7 +72,7 @@ bukkit {
 }
 
 dependencies {
-  if (parseBoolean(properties["useSpigotApi"] as String)) compileOnly("org.spigotmc:spigot-api:${properties["spigotVersion"]}")
+  if (parseBoolean("${properties["useSpigotApi"]}")) compileOnly("org.spigotmc:spigot-api:${properties["spigotVersion"]}")
   else compileOnly("io.inkwellmc.inkwell:inkwell-api:${properties["inkwellVersion"]}")
 
   shadow("org.jetbrains.kotlin:kotlin-stdlib:2.0.0-Beta5")

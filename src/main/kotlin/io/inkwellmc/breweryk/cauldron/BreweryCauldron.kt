@@ -43,6 +43,6 @@ class BreweryCauldron(val block: Block) {
   }
 
   fun sendStatusMessage(player: Player) {
-    BreweryK.debugMessage(player, "Это котел Brewery")
+    BreweryK.debugMessage(player, "Это котел Brewery", "Тип: ${CauldronType.fromMaterial(block.type)}")
   }
 }

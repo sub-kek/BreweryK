@@ -14,6 +14,7 @@ import io.inkwellmc.breweryk.util.LegacyUtil
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.Random
 
 class BreweryK : JavaPlugin() {
   lateinit var language: YamlLanguage private set
@@ -62,22 +63,34 @@ class BreweryK : JavaPlugin() {
     val language: YamlLanguage
       get() = instance.language
 
-    fun message(sender: CommandSender, message: String) {
-      sender.sendMessage("${language.get("prefix")}$message")
+    fun message(sender: CommandSender, vararg message: String) {
+      message.forEach {
+        sender.sendMessage("${language.get("prefix")}${it}")
+      }
     }
 
-    fun message(player: Player, message: String) {
-      player.sendMessage("${language.get("prefix")}$message")
+    fun message(player: Player, vararg message: String) {
+      message.forEach {
+        player.sendMessage("${language.get("prefix")}${it}")
+      }
     }
 
-    fun debugMessage(sender: CommandSender, message: String) {
+    fun debugMessage(sender: CommandSender, vararg message: String) {
       if (!BreweryConfig.verboseOutput) return
-      sender.sendMessage("${language.get("debug-prefix")}$message")
+      message.forEach {
+        sender.sendMessage("${language.get("debug-prefix")}${it}")
+      }
     }
 
-    fun debugMessage(player: Player, message: String) {
+    fun debugMessage(player: Player, vararg message: String) {
       if (!BreweryConfig.verboseOutput) return
-      player.sendMessage("${language.get("debug-prefix")}$message")
+      message.forEach {
+        player.sendMessage("${language.get("debug-prefix")}${it}")
+      }
     }
   }
+}
+
+fun main() {
+  println(Random().nextInt(100000) shl 1)
 }

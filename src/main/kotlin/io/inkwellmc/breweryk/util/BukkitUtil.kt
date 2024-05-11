@@ -31,8 +31,8 @@ object BukkitUtil {
       val barrel2: Barrel? = Barrel.getBySpigot(block)
       if (barrel2 != null) {
         if (!barrel2.isLarge()) {
-            barrel2.remove(null, player, true)
-            return true
+          barrel2.remove(null, player, true)
+          return true
         } else {
           barrel2.body.destroySign()
         }
@@ -57,7 +57,13 @@ object BukkitUtil {
         armorStand.isInvisible = true
         armorStand.isInvulnerable = true
         armorStand.customName = BreweryK.language.get("barrel.title")
-        location.world!!.createExplosion(location, if (barrelBody.isLarge()) BreweryConfig.largeBarrelExplodePower else BreweryConfig.smallBarrelExplodePower, true, true, armorStand)
+        location.world!!.createExplosion(
+          location,
+          if (barrelBody.isLarge()) BreweryConfig.largeBarrelExplodePower else BreweryConfig.smallBarrelExplodePower,
+          true,
+          true,
+          armorStand
+        )
         armorStand.remove()
       }
     }

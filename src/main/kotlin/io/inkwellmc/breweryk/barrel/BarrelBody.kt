@@ -18,7 +18,10 @@ class BarrelBody(var barrel: Barrel, var signOffset: Byte) {
     boundingBox = BoundingBox(0, 0, 0, 0, 0, 0)
   }
 
-  constructor(barrel: Barrel, signOffset: Byte, boundingBoxFile: BoundingBox, async: Boolean) : this(barrel, signOffset) {
+  constructor(barrel: Barrel, signOffset: Byte, boundingBoxFile: BoundingBox, async: Boolean) : this(
+    barrel,
+    signOffset
+  ) {
     if (boundsSeemBad(boundingBoxFile)) {
       if (async) {
         this.boundingBox = null
@@ -170,7 +173,8 @@ class BarrelBody(var barrel: Barrel, var signOffset: Byte) {
       spigot.z + startZ,
       spigot.x + endX,
       spigot.y + 1,
-      spigot.z + endZ)
+      spigot.z + endZ
+    )
     return null
   }
 
@@ -237,7 +241,10 @@ class BarrelBody(var barrel: Barrel, var signOffset: Byte) {
           }
 
           // Проверка что блоки на концах крестовины бочек являются досками
-          if (((y == 0 && asLeftRight == 0) || (y == 1 && (asLeftRight == 1 || asLeftRight == -1)) || (y == 2 && asLeftRight == 0)) && LegacyUtil.isWoodPlanks(type)) {
+          if (((y == 0 && asLeftRight == 0) || (y == 1 && (asLeftRight == 1 || asLeftRight == -1)) || (y == 2 && asLeftRight == 0)) && LegacyUtil.isWoodPlanks(
+              type
+            )
+          ) {
             z++
           } // Проверка что блоки в центре бочки являются досками
           else if ((y == 1 && (z == 0 || asForward == 1 || asForward == 4)) && LegacyUtil.isWoodPlanks(type)) {
@@ -249,7 +256,10 @@ class BarrelBody(var barrel: Barrel, var signOffset: Byte) {
           else if ((y == 0 && (asLeftRight == 1 || asLeftRight == -1)) && LegacyUtil.areStairsInverted(block)) {
             z++
           } // Проверка что блоки в верхних углах бочки являются перевернутыми ступенями
-          else if ((y == 2 && (asLeftRight == 1 || asLeftRight == -1)) && !LegacyUtil.areStairsInverted(block) && LegacyUtil.isWoodStairs(type)) {
+          else if ((y == 2 && (asLeftRight == 1 || asLeftRight == -1)) && !LegacyUtil.areStairsInverted(block) && LegacyUtil.isWoodStairs(
+              type
+            )
+          ) {
             z++
           } else {
             return block
@@ -268,7 +278,8 @@ class BarrelBody(var barrel: Barrel, var signOffset: Byte) {
       spigot.z + startZ,
       spigot.x + endX,
       spigot.y + 2,
-      spigot.z + endZ)
+      spigot.z + endZ
+    )
 
     return null
   }

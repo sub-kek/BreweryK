@@ -14,7 +14,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 import java.util.*
-import kotlin.ConcurrentModificationException
 
 
 class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
@@ -31,13 +30,29 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
     body = BarrelBody(this, signOffset)
   }
 
-  constructor(spigot: Block, signOffset: Byte, boundingBox: BoundingBox, items: Map<String, Any>, time: Float) : this(spigot, signOffset, boundingBox, items, time, false)
+  constructor(spigot: Block, signOffset: Byte, boundingBox: BoundingBox, items: Map<String, Any>, time: Float) : this(
+    spigot,
+    signOffset,
+    boundingBox,
+    items,
+    time,
+    false
+  )
 
-  constructor(spigot: Block, signOffset: Byte, bounds: BoundingBox, items: Map<String, Any>?, time: Float, async: Boolean) : this(spigot, signOffset) {
+  constructor(
+    spigot: Block,
+    signOffset: Byte,
+    bounds: BoundingBox,
+    items: Map<String, Any>?,
+    time: Float,
+    async: Boolean
+  ) : this(spigot, signOffset) {
     if (isLarge()) {
-      this.inventory = BreweryK.instance.server.createInventory(this, 27, BreweryK.language.get("barrel.inventory-title"))
+      this.inventory =
+        BreweryK.instance.server.createInventory(this, 27, BreweryK.language.get("barrel.inventory-title"))
     } else {
-      this.inventory = BreweryK.instance.server.createInventory(this, 9, BreweryK.language.get("barrel.inventory-title"))
+      this.inventory =
+        BreweryK.instance.server.createInventory(this, 9, BreweryK.language.get("barrel.inventory-title"))
     }
     if (items != null) {
       for (slot in items.keys) {
@@ -69,7 +84,13 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
     if (location.world == null) return
     if (isLarge()) {
       location.world!!.playSound(location, Sound.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.4f, 0.55f + randPitch)
-      location.world!!.playSound(location, Sound.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 0.4f, 0.45f + randPitch)
+      location.world!!.playSound(
+        location,
+        Sound.BLOCK_BREWING_STAND_BREW,
+        SoundCategory.BLOCKS,
+        0.4f,
+        0.45f + randPitch
+      )
     } else {
       location.world!!.playSound(location, Sound.BLOCK_BARREL_OPEN, SoundCategory.BLOCKS, 0.5f, 0.8f + randPitch)
     }
@@ -248,9 +269,11 @@ class Barrel(val spigot: Block, signOffset: Byte) : InventoryHolder {
     val items = inventory.contents
     inventory.clear()
 
-    items.forEach { if (it != null) {
+    items.forEach {
+      if (it != null) {
         broken?.world?.dropItem(broken.location, it) ?: spigot.world.dropItem(spigot.location, it)
-    }}
+      }
+    }
 
     barrels.remove(this)
   }

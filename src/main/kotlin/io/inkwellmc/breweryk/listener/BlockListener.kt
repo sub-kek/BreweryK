@@ -4,7 +4,9 @@ import io.inkwellmc.breweryk.BreweryK
 import io.inkwellmc.breweryk.barrel.Barrel
 import io.inkwellmc.breweryk.config.BreweryConfig
 import io.inkwellmc.breweryk.type.BarrelDestroyReason
+import io.inkwellmc.breweryk.util.BreweryLogger
 import io.inkwellmc.breweryk.util.BukkitUtil
+import io.inkwellmc.breweryk.util.LegacyUtil
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
@@ -16,6 +18,10 @@ class BlockListener : Listener {
   fun onBlockBreak(event: BlockBreakEvent) {
     if (!BukkitUtil.blockDestroy(event.block, event.player, BarrelDestroyReason.PLAYER)) {
       event.isCancelled = true
+    }
+
+    if (LegacyUtil.isCauldronHeatSource(event.block)) {
+      BreweryLogger.debug("Сломан источник жары котла")
     }
   }
 

@@ -43,10 +43,6 @@ object BreweryData {
           } catch (e: IllegalArgumentException) {
             continue
           }
-
-          val quality: Int = section.getInt("$uuid.quality")
-          val drunk: Int = section.getInt("$uuid.drunk")
-          val offDrunk: Int = section.getInt("$uuid.offDrunk", 0)
         }
       }
 
@@ -103,7 +99,11 @@ object BreweryData {
         if (cauldronBlockLocation != null) {
           val splitLocation = cauldronBlockLocation.split("/".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
           if (splitLocation.size == 3) {
-            val block = world.getBlockAt(BreweryK.instance.parseInt(splitLocation[0]), BreweryK.instance.parseInt(splitLocation[1]), BreweryK.instance.parseInt(splitLocation[2]))
+            val block = world.getBlockAt(
+              BreweryK.instance.parseInt(splitLocation[0]),
+              BreweryK.instance.parseInt(splitLocation[1]),
+              BreweryK.instance.parseInt(splitLocation[2])
+            )
 
             BreweryK.instance.foliaLib.impl.runAtLocationLater(block.location, Consumer {
               BreweryCauldron.getByBlock(block)
@@ -125,15 +125,27 @@ object BreweryData {
             // load itemStacks from invSection
 
             val invSection = section.getConfigurationSection("$barrel.inv")
-            val block = world.getBlockAt(BreweryK.instance.parseInt(splitted[0]), BreweryK.instance.parseInt(splitted[1]), BreweryK.instance.parseInt(splitted[2]))
+            val block = world.getBlockAt(
+              BreweryK.instance.parseInt(splitted[0]),
+              BreweryK.instance.parseInt(splitted[1]),
+              BreweryK.instance.parseInt(splitted[2])
+            )
             val time = section.getDouble("$barrel.time", 0.0).toFloat()
             val sign = section.getInt("$barrel.sign", 0).toByte()
 
             var box: BoundingBox? = null
             if (section.contains("$barrel.bounds")) {
-              val bds = section.getString("$barrel.bounds", "")!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+              val bds = section.getString("$barrel.bounds", "")!!.split(",".toRegex()).dropLastWhile { it.isEmpty() }
+                .toTypedArray()
               if (bds.size == 6) {
-                box = BoundingBox(BreweryK.instance.parseInt(bds[0]), BreweryK.instance.parseInt(bds[1]), BreweryK.instance.parseInt(bds[2]), BreweryK.instance.parseInt(bds[3]), BreweryK.instance.parseInt(bds[4]), BreweryK.instance.parseInt(bds[5]))
+                box = BoundingBox(
+                  BreweryK.instance.parseInt(bds[0]),
+                  BreweryK.instance.parseInt(bds[1]),
+                  BreweryK.instance.parseInt(bds[2]),
+                  BreweryK.instance.parseInt(bds[3]),
+                  BreweryK.instance.parseInt(bds[4]),
+                  BreweryK.instance.parseInt(bds[5])
+                )
               }
             }
 

@@ -22,6 +22,7 @@ object BreweryLogger {
 
   /**
    * Отправляет информационное сообщение в консоль
+   *
    * @param infoMessage сообщение для вывода на консоль
    */
   fun info(infoMessage: String) {

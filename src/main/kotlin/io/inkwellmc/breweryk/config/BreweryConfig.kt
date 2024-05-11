@@ -26,12 +26,17 @@ object BreweryConfig {
     }
 
     getString("info.version", "1.0", "Don't change this value")
-    setComment("info",
+    setComment(
+      "info",
       "Brewery Configuration",
-      "Join our Discord for support: https://discord.gg/eRvwvmEXWz")
+      "Join our Discord for support: https://discord.gg/eRvwvmEXWz"
+    )
 
     for (method in BreweryConfig::class.java.declaredMethods) {
-      if (Modifier.isPrivate(method.modifiers) && method.parameterCount == 0 && method.returnType == Void.TYPE && !method.name.startsWith("lambda")) {
+      if (Modifier.isPrivate(method.modifiers) && method.parameterCount == 0 && method.returnType == Void.TYPE && !method.name.startsWith(
+          "lambda"
+        )
+      ) {
         method.isAccessible = true
         try {
           method.invoke(this)
